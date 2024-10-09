@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "//"
+  ],
+  "tasks": {
+    "build": {
+      "env": ["VITE_*"]
+    },
+    "build:dev": {
+      "env": ["VITE_*"]
+    },
+    "dev": {
+      "env": ["VITE_*"]
+    }
+  }
+}
