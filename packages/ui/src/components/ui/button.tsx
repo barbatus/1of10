@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
+import { Loader2 } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "#/lib/utils"
@@ -25,6 +26,9 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
+      },
+      loading: {
+        true: "opacity-50 pointer-events-none",
       },
     },
     defaultVariants: {
@@ -54,4 +58,66 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+
+const LoadingButton = React.forwardRef<HTMLButtonElement, Omit<ButtonProps, "asChild" | "onClick"> & {
+  loading?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
+}>(
+  (
+    {
+      className,
+      size,
+      variant,
+      loading: loadingExternal,
+      type = "button",
+      onClick,
+      ...props
+    },
+    ref,
+  ) => {
+    const [waitingOnClick, setWaiting] = React.useState(false);
+    const waitableOnClick = React.useCallback(
+      async (e: React.MouseEvent<HTMLButtonElement>) => {
+        setWaiting(true);
+        try {
+          await onClick?.(e);
+        } finally {
+          setWaiting(false);
+        }
+      },
+      [onClick],
+    );
+
+    const loading = Boolean(waitingOnClick || loadingExternal);
+
+    return (
+      <button
+        className={cn(
+          buttonVariants({ size, variant, loading, className }),
+          // Needed for the spinner below
+          "relative",
+        )}
+        ref={ref}
+        type={type}
+        {...props}
+        onClick={waitableOnClick}
+      >
+        <div
+          className={cn("inline-flex items-center", {
+            invisible: loading,
+          })}
+        >
+          {props.children}
+        </div>
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="h-5 w-5 animate-spin" />
+          </div>
+        )}
+      </button>
+    );
+  },
+);
+LoadingButton.displayName = "LoadingButton";
+
+export { Button, LoadingButton, buttonVariants }
