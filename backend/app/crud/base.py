@@ -20,7 +20,7 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
         schema_model = self.get_schema_type()
         return schema_model.model_validate(obj)  # type: ignore[return-value]
 
-    def get_many(self, db: Session, ids: Any, *options: Any) -> list[ModelType]:
+    def get_many(self, db: Session, ids: list[str | int], *options: Any) -> list[ModelType]:
         query = db.query(self.model)
 
         if getattr(self.model, 'blob', False):
@@ -28,7 +28,7 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
 
         return query.filter(self.model.id.in_(ids)).options(*options).all()
 
-    def get(self, db: Session, id: Any, *options: Any) -> ModelType | None:
+    def get(self, db: Session, id: str | int, *options: Any) -> ModelType | None:
         return next(iter(self.get_many(db, [id], *options)), None)
 
     def scan(self, db: Session, *, skip: int = 0, limit: int = 100, query: Query | None = None) -> list[ModelType]:

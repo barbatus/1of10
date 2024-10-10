@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey, Text
+
 from app.models.base import ORMBase
 
 class ThumbnailScore(ORMBase):
