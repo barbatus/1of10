@@ -22,7 +22,7 @@ def upload(
 
     obj = thumbnail.create(db, obj_in = { "name": name, "file_data": file.file.read(), "content_type": file.content_type })
 
-    return { "id": obj.id, "downloadUrl": f"thumbnails/download/{obj.id}" }
+    return { "id": obj.id, "download_url": f"thumbnails/download/{obj.id}" }
 
 @router.get("/thumbnails/download/{obj_id}")
 def download(
