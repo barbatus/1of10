@@ -2,10 +2,11 @@ import { initQueryClient } from "@ts-rest/react-query";
 
 import { thumbnailContract } from "./thumbnail.contract";
 
+export const API_HOST = import.meta.env.VITE_API_HOST + "/api/v1";
+
 export const thumbnailApi = initQueryClient(thumbnailContract, {
   baseUrl: `${import.meta.env.VITE_API_HOST}`,
 });
-
 
 export const useThumbnailScores = () => {
   return thumbnailApi.scores.useQuery(["scores"], {}, {

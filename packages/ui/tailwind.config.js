@@ -1,7 +1,16 @@
+const path = require("path");
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  content: [],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    path.join(
+      __dirname,
+      "src/**/*.{js,jsx,ts,tsx}"
+    ),
+  ],
   theme: {
   	extend: {
   		borderRadius: {
