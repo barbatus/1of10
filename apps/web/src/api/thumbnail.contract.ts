@@ -38,7 +38,7 @@ export const thumbnailContract = c.router(
     upload: {
       method: "POST",
       path: "thumbnail/upload",
-      contentType: 'multipart/form-data',
+      contentType: "multipart/form-data",
       body: z.object({
         name: z.string(),
         file: z.instanceof(File),

@@ -1,4 +1,3 @@
-
 import { HTMLAttributes, ReactNode } from "react";
 
 import { cn } from "../../lib/utils";
@@ -9,7 +8,7 @@ type TypographyProps = HTMLAttributes<HTMLElement> & {
   muted?: boolean;
   centered?: boolean;
   mbx?: string;
-}
+};
 
 export function H1({
   children,

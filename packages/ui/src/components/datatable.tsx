@@ -1,32 +1,34 @@
 import {
-  useReactTable,
+  CellContext,
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  RowData,
   getSortedRowModel,
+  RowData,
   SortingState,
-} from '@tanstack/react-table';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from './ui/table';
+  useReactTable,
+} from "@tanstack/react-table";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 
 import { cn } from "../lib/utils";
-import { P } from './ui/typography';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+import { P } from "./ui/typography";
 
 const LOADING_ROW = {};
 
-const FAKE_LOADING_DATA = Array.from({ length: 4 }).fill(
-  LOADING_ROW,
-);
+const FAKE_LOADING_DATA = Array.from({ length: 4 }).fill(LOADING_ROW);
 
-const EmptyBlock = ({ className, emptyText }: {
+const EmptyBlock = ({
+  className,
+  emptyText,
+}: {
   emptyText?: string;
   className?: string;
 }) => {
@@ -42,16 +44,21 @@ const EmptyBlock = ({ className, emptyText }: {
       </P>
     </div>
   );
-}
+};
 
-export const DataTable = <TData extends RowData, TValue>({ data, columns, loading, defaultSorting, className }: {
+export const DataTable = <TData extends RowData, TValue>({
+  data,
+  columns,
+  loading,
+  defaultSorting,
+  className,
+}: {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
   loading?: boolean;
   className?: string;
   defaultSorting?: SortingState;
 }) => {
-
   const dataRows = useMemo(() => {
     if (loading) {
       return FAKE_LOADING_DATA as TData[];
@@ -62,25 +69,21 @@ export const DataTable = <TData extends RowData, TValue>({ data, columns, loadin
   const mapColumn = useCallback(
     (col: ColumnDef<TData, TValue>) => ({
       ...col,
-      cell: ((params) => {
-        if (!col.cell) {
-          return null;
-        }
-
+      cell: ((params: CellContext<TData, TValue>) => {
         if (params.row.original === LOADING_ROW) {
           return (
             <div className="flex items-center h-10 w-full">
               <div className="animate-pulse rounded-md bg-muted h-6 w-3/4" />
             </div>
-         );
+          );
         }
-        return typeof col.cell === "function" ? col.cell(params) : col;
-      }) as ColumnDef<TData, TValue>["cell"],
+        return typeof col.cell === "function" ? col.cell(params) as ReactNode : col;
+      }),
     }),
     [],
   );
 
-  const [sorting, setSorting] = useState<SortingState>(defaultSorting);
+  const [sorting, setSorting] = useState<SortingState>(defaultSorting ?? []);
 
   const table = useReactTable({
     data: dataRows,
@@ -92,8 +95,8 @@ export const DataTable = <TData extends RowData, TValue>({ data, columns, loadin
       sorting,
       columnVisibility: {
         id: false,
-      }
-    }
+      },
+    },
   });
 
   return (
@@ -118,13 +121,14 @@ export const DataTable = <TData extends RowData, TValue>({ data, columns, loadin
         <TableBody>
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className={cn({ "border-none": loading })}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className={cn({ "border-none": loading })}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="p-4">
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
@@ -140,6 +144,6 @@ export const DataTable = <TData extends RowData, TValue>({ data, columns, loadin
       </Table>
     </div>
   );
-}
+};
 
 export default DataTable;
