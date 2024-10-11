@@ -89,21 +89,21 @@ class CRUDRouter(APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, Up
         )
 
         self.add_api_route(
-            f"{prefix}/{{obj_id}}",
+            f"{prefix}/{{obj_id:int}}",
             exception_handler()(get_object) if exception_handler else get_object,
             methods=["GET"],
             summary=f"Get {api_name}",
         )
 
         self.add_api_route(
-            f"{prefix}/{{obj_id}}",
+            f"{prefix}/{{obj_id:int}}",
             exception_handler()(update_object) if exception_handler else update_object,
             methods=["PUT"],
             summary=f"Update {api_name}"
         )
 
         self.add_api_route(
-            f"{prefix}/{{obj_id}}",
+            f"{prefix}/{{obj_id:int}}",
             exception_handler()(delete_object) if exception_handler else delete_object,
             methods=["DELETE"],
             summary=f"delete {api_name}"

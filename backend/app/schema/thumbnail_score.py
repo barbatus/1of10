@@ -14,9 +14,13 @@ class ThumbnailScoreBase(BaseModel):
 
 class ThumbnailScore(ThumbnailScoreBase):
     id: int
-    result_score: Optional[float] = None
+    score: Optional[float] = None
     result_hint: Optional[str] = None
 
 
 class ThumbnailScoreCreate(ThumbnailScoreBase):
     pass
+
+class ThumbnailScoreUpdate(BaseModel):
+    score: Optional[float] = None
+    result_hint: Optional[str] = None

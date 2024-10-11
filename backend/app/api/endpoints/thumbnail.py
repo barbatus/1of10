@@ -9,9 +9,11 @@ from app.db import get_db
 from app.schema.thumbnail import ThumbnailCreate, ThumbnailResponse
 from app.models.thumbnail import Thumbnail as SqlThumbnail
 
-router = CRUDRouter("thumbnail", thumbnail)
+router_name = "thumbnail"
 
-@router.post("/thumbnails/upload")
+router = CRUDRouter(router_name, thumbnail)
+
+@router.post(f"/{router_name}/upload")
 def upload(
     file: UploadFile = File(...), 
     name: str = Form(...),
@@ -22,9 +24,9 @@ def upload(
 
     obj = thumbnail.create(db, obj_in = { "name": name, "file_data": file.file.read(), "content_type": file.content_type })
 
-    return { "id": obj.id, "download_url": f"thumbnails/download/{obj.id}" }
+    return { "id": obj.id, "download_url": f"{router_name}/download/{obj.id}" }
 
-@router.get("/thumbnails/download/{obj_id}")
+@router.get(f"/{router_name}/download/{{obj_id:int}}")
 def download(
     thumbnail: SqlThumbnail = Depends(crud_model_dependency(thumbnail))
 ):
