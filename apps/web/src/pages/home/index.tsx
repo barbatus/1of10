@@ -33,7 +33,7 @@ const columns = [
   },
   {
     id: "prompt",
-    header: "Description",
+    header: "Video prompt",
     accessorKey: "userPrompt",
     cell: ({ getValue }) => <div className="w-52">{getValue<string>()}</div>,
   },
@@ -67,6 +67,7 @@ export const Home = () => {
           loading={isLoading}
           defaultSorting={[{ id: "id", desc: true }]}
           className="mb-4"
+          emptyText="Here you will see your uploaded thumbnails"
         />
       </div>
       {open && <ThumbnailModal onClose={() => setOpen(false)} />}

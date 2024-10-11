@@ -52,12 +52,14 @@ export const DataTable = <TData extends RowData, TValue>({
   loading,
   defaultSorting,
   className,
+  emptyText,
 }: {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
   loading?: boolean;
   className?: string;
   defaultSorting?: SortingState;
+  emptyText?: string;
 }) => {
   const dataRows = useMemo(() => {
     if (loading) {
@@ -138,7 +140,7 @@ export const DataTable = <TData extends RowData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center h-24">
-                <EmptyBlock />
+                <EmptyBlock emptyText={emptyText} />
               </TableCell>
             </TableRow>
           )}
