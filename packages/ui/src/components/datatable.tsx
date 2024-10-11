@@ -103,7 +103,7 @@ export const DataTable = <TData extends RowData, TValue>({ data, columns, loadin
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="h-12 font-semibold px-6">
+                <TableHead key={header.id} className="h-12 font-semibold p-4">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -120,7 +120,7 @@ export const DataTable = <TData extends RowData, TValue>({ data, columns, loadin
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className={cn({ "border-none": loading })}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="p-4">
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext(),

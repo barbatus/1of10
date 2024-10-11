@@ -1,5 +1,7 @@
 import React, { useCallback } from "react";
 
+import { ColumnDef } from '@tanstack/react-table';
+
 import {
   Dialog,
   DialogContent,
@@ -11,10 +13,13 @@ import {
   Textarea,
   DialogFooter,
   LoadingButton,
+  DataTable,
+  H4,
 } from "@app/ui";
 
-import { thumbnailApi, API_HOST } from "@/api";
-import { useIsMutating } from "@tanstack/react-query";
+import { ThumbnailScore } from "@/api/thumbnail.contract";
+
+import { API_HOST, useUploadThumbnail, useScoreThumbnail, getThumbnailDownloadUrl, useThumbnailScores } from "@/api";
 
 const ThumbnailModal = ({
   open,
@@ -23,15 +28,9 @@ const ThumbnailModal = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const upload = thumbnailApi.upload.useMutation({
-    mutationKey: ["thumbnailUpload"],
-  });
-  const isUploading = Boolean(useIsMutating({ mutationKey: ["thumbnailUpload"] }));
-
-  const saveScore = thumbnailApi.create.useMutation({
-    mutationKey: ["thumbnailScore"],
-  });
-  const isSaving = Boolean(useIsMutating({ mutationKey: ['thumbnailScore'] }));
+  const { upload, isLoading: isUploading } = useUploadThumbnail();
+  const { getScore, isLoading: isSaving } = useScoreThumbnail();
+  const { addScore } = useThumbnailScores();
 
   const [thumbnail, setThumbnail] = React.useState<{
     id: number;
@@ -43,24 +42,21 @@ const ThumbnailModal = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    upload.mutateAsync({
-      body: {
-        file,
-        name: e.target.value,
-      }
-    }).then((res) => {
-      setThumbnail(res.body);
-    });
+    upload({
+      file,
+      name: e.target.value,
+    }).then(setThumbnail);
   }, []);
 
   const onSend = useCallback(() => {
     if (!thumbnail) return;
 
-    saveScore.mutateAsync({
-      body: {
-        thumbnailId: thumbnail.id,
-        userPrompt: prompt,
-      }
+    getScore({
+      thumbnailId: thumbnail.id,
+      userPrompt: prompt,
+    }).then((res) => {
+      addScore(res);
+      onClose();
     });
   }, [thumbnail, prompt]);
 
@@ -70,7 +66,7 @@ const ThumbnailModal = ({
         <DialogHeader>
           <DialogTitle className="mb-4">Get Thumbnail Score</DialogTitle>
         </DialogHeader>
-         <div className="flex flex-col items-center">
+         <div className="flex flex-col items-center space-y-4">
             <div className="flex items-center justify-center w-full h-60">
               {thumbnail ?
                 <img src={`${API_HOST}/${thumbnail.downloadUrl}`} className="h-full" /> :
@@ -93,13 +89,63 @@ const ThumbnailModal = ({
   )
 }
 
+const columns: ColumnDef<ThumbnailScore>[] = [
+  {
+    id: "id",
+    accessorKey: "id",
+  },
+  {
+    id: "thumbnail",
+    header: "Thumbnail",
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center h-24 w-36">
+        <img
+          src={getThumbnailDownloadUrl(row.original.thumbnailId)}
+          alt={`Thumbnail ${row.original.thumbnailId}`}
+          className="rounded max-h-full max-w-full"
+        />
+      </div>
+    ),
+  },
+  {
+    id: "score",
+    header: "Score",
+    accessorKey: "score",
+    cell: ({ getValue }) => (
+      <div className="">{getValue<number>()}</div>
+    ),
+  },
+  {
+    id: "prompt",
+    header: "Description",
+    accessorKey: "userPrompt",
+    cell: ({ getValue }) => (
+      <div className="w-52">{getValue<string>()}</div>
+    ),
+  },
+  {
+    id: "hint",
+    header: "Suggested Improvement",
+    accessorKey: "resultHint",
+    cell: ({ getValue }) => <div className="max-h-56 line-clamp-4 w-60">{getValue<string>()}</div>,
+  },
+];
+
 export const Home = () => {
   const [open, setOpen] = React.useState(false);
 
+  const { data, isLoading } = useThumbnailScores();
+
   return(
-    <div className="max-w-2xl flex justify-center mx-auto mt-8">
-      <Button onClick={() => setOpen(true)}>Open Modal</Button>
-      <ThumbnailModal open={open} onClose={() => setOpen(false)} />
+    <div className="h-full max-w-4xl flex flex-col justify-center mx-auto py-8">
+      <div className="flex gap-2 mb-4">
+        <H4>Get a tip how to improve video thumbnail</H4>
+        <Button className="w-fit ml-auto" onClick={() => setOpen(true)}>Upload thumbnail</Button>
+      </div>
+      <div className="h-0 flex-grow overflow-auto">
+        <DataTable data={data ?? []} columns={columns} loading={isLoading} defaultSorting={[{ id: "id", desc: true }]} className="mb-4" />
+      </div>
+      {open && <ThumbnailModal open onClose={() => setOpen(false)} />}
     </div>
   )
 }

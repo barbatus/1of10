@@ -11,10 +11,12 @@ export const ListQuerySchema = z.object({
 export const ThumbnailScoreSchema = z.object({
   id: z.number(),
   thumbnailId: z.number(),
-  resultScore: z.number().nullable(),
+  score: z.number().nullable(),
   userPrompt: z.string().min(1),
   resultHint: z.string().nullable(),
 });
+
+export type ThumbnailScore = z.infer<typeof ThumbnailScoreSchema>;
 
 export const ThumbnailScoreInputSchema = z.object({
   thumbnailId: z.number(),
@@ -25,7 +27,7 @@ export const thumbnailContract = c.router(
   {
     scores: {
       method: "GET",
-      path: "thumbnails",
+      path: "thumbnail-scores",
       query: ListQuerySchema,
       responses: {
         200: z.object({
@@ -35,7 +37,7 @@ export const thumbnailContract = c.router(
     },
     upload: {
       method: "POST",
-      path: "thumbnails/upload",
+      path: "thumbnail/upload",
       contentType: 'multipart/form-data',
       body: z.object({
         name: z.string(),
@@ -48,9 +50,9 @@ export const thumbnailContract = c.router(
         }),
       },
     },
-    create: {
+    score: {
       method: "POST",
-      path: "thumbnail-score",
+      path: "thumbnail-score/score",
       body: ThumbnailScoreInputSchema,
       responses: {
         200: ThumbnailScoreSchema,
