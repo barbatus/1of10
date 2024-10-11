@@ -23,6 +23,8 @@ export const ThumbnailScoreInputSchema = z.object({
   userPrompt: z.string().min(1),
 });
 
+export type ThumbnailScoreInput = z.infer<typeof ThumbnailScoreInputSchema>;
+
 export const thumbnailContract = c.router(
   {
     scores: {

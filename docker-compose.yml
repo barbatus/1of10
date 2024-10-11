@@ -12,15 +12,6 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
-  redis:
-    image: redis:7-alpine
-    restart: always
-    command: redis-server --requirepass redis_password
-    volumes:
-      - redis-data:/var/lib/redis/data
-    ports:
-      - "6379:6379"
-
 volumes:
   mysql-data: {}
-  redis-data: {}
+

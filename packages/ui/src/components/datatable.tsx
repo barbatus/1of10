@@ -69,7 +69,7 @@ export const DataTable = <TData extends RowData, TValue>({
   const mapColumn = useCallback(
     (col: ColumnDef<TData, TValue>) => ({
       ...col,
-      cell: ((params: CellContext<TData, TValue>) => {
+      cell: (params: CellContext<TData, TValue>) => {
         if (params.row.original === LOADING_ROW) {
           return (
             <div className="flex items-center h-10 w-full">
@@ -77,8 +77,10 @@ export const DataTable = <TData extends RowData, TValue>({
             </div>
           );
         }
-        return typeof col.cell === "function" ? col.cell(params) as ReactNode : col;
-      }),
+        return typeof col.cell === "function"
+          ? (col.cell(params) as ReactNode)
+          : col;
+      },
     }),
     [],
   );

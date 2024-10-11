@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "ENV=local poetry run python server.py"
+  },
+  "devDependencies": {
+    "turbo": "2.0.10"
+  },
+  "dependencies": {
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "pnpm@9.11.0"
+}
+  

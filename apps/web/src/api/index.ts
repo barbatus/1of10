@@ -22,14 +22,20 @@ export const useThumbnailScores = () => {
   const client = useQueryClient();
 
   const addScore = (score: ThumbnailScore) => {
-    client.setQueryData(["scores"], (data: (typeof result)["data"]) => {
-      if (!data) return data;
-      const saved = data;
-      return {
-        ...data,
-        body: [score].concat(saved),
-      };
-    });
+    client.setQueryData(
+      ["scores"],
+      (data: { body: { results: ThumbnailScore[] } }) => {
+        if (!data) return data;
+        const saved = data.body.results;
+        return {
+          ...data,
+          body: {
+            ...data.body,
+            results: [score, ...saved],
+          },
+        };
+      },
+    );
   };
 
   return {
