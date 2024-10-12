@@ -1,7 +1,7 @@
 ### Setup
 
-To set up the demo, it'll need installing `pnpm` and `Poetry` globally.
-E.g. in the case of macOS, they can be installled them via Homebrew:
+To set up the demo, it'll need installing Docker, `pnpm` and `poetry` globally.
+E.g. in the case of macOS, `pnpm` and `poetry` can be installled via Homebrew:
 
 ```bash
 brew install pnpm

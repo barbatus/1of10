@@ -26,6 +26,9 @@ export const thumbnailContract = c.router(
         200: z.object({
           results: z.array(schemas.ThumbnailScore),
         }),
+        500: z.object({
+          detail: z.string(),
+        }),
       },
     },
     upload: {
@@ -45,7 +48,7 @@ export const thumbnailContract = c.router(
           detail: z.string(),
         }),
         500: z.object({
-          string: z.string(),
+          detail: z.string(),
         }),
       },
     },

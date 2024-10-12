@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getThumbnailDownloadUrl, useThumbnailScores } from "@/api";
 import { ThumbnailScore } from "@/api/thumbnail.contract";
 
+import { LoadingError } from "./loading-error";
 import { ThumbnailModal } from "./thumbnail-modal";
 
 const MobileList = ({
@@ -117,7 +118,11 @@ const columns = [
 export const Home = () => {
   const [open, setOpen] = useState(false);
 
-  const { data, isLoading } = useThumbnailScores();
+  const { data, error, isLoading } = useThumbnailScores();
+
+  if (error) {
+    return <LoadingError error={error} />;
+  }
 
   return (
     <div className="h-full md:max-w-4xl flex flex-col justify-center mx-auto py-8 px-4">
@@ -145,7 +150,7 @@ export const Home = () => {
           defaultSorting={[{ id: "id", desc: true }]}
           className="mb-4 max-md:hidden"
           emptyText="Here you will see your uploaded thumbnails"
-          getRowId={(row) => row.id}
+          getRowId={(row) => String(row.id)}
         />
       </div>
       {open && <ThumbnailModal onClose={() => setOpen(false)} />}

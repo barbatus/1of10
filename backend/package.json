@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "poetry install & poetry run alembic upgrade head",
-    "dev": "ENV=local poetry run python server.py"
+    "dev": ""
   },
   "devDependencies": {
     "turbo": "2.0.10"
