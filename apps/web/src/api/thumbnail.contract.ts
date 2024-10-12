@@ -1,6 +1,8 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
+import { schemas } from "./api-schema";
+
 const c = initContract();
 
 export const ListQuerySchema = z.object({
@@ -8,22 +10,11 @@ export const ListQuerySchema = z.object({
   limit: z.number().optional(),
 });
 
-export const ThumbnailScoreSchema = z.object({
-  id: z.number(),
-  thumbnailId: z.number(),
-  score: z.number().nullable(),
-  userPrompt: z.string().min(1).max(500),
-  resultHint: z.string().nullable(),
-});
+export type ThumbnailScore = z.infer<typeof schemas.ThumbnailScore>;
 
-export type ThumbnailScore = z.infer<typeof ThumbnailScoreSchema>;
+export const ThumbnailScoreInputSchema = schemas.ThumbnailScoreCreate;
 
-export const ThumbnailScoreInputSchema = z.object({
-  thumbnailId: z.number(),
-  userPrompt: z.string().min(1),
-});
-
-export type ThumbnailScoreInput = z.infer<typeof ThumbnailScoreInputSchema>;
+export type ThumbnailScoreInput = z.infer<typeof schemas.ThumbnailScoreCreate>;
 
 export const thumbnailContract = c.router(
   {
@@ -33,7 +24,7 @@ export const thumbnailContract = c.router(
       query: ListQuerySchema,
       responses: {
         200: z.object({
-          results: z.array(ThumbnailScoreSchema),
+          results: z.array(schemas.ThumbnailScore),
         }),
       },
     },
@@ -61,9 +52,9 @@ export const thumbnailContract = c.router(
     score: {
       method: "POST",
       path: "thumbnail-score/score",
-      body: ThumbnailScoreInputSchema,
+      body: schemas.ThumbnailScoreCreate,
       responses: {
-        200: ThumbnailScoreSchema,
+        200: schemas.ThumbnailScore,
       },
     },
   },
