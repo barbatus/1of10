@@ -10,7 +10,7 @@ brew install poetry
 
 ### Running
 
-To run it, execute dev.sh in the root folder:
+In order to run it,do the following:
 
 ```bash
 cd backend
