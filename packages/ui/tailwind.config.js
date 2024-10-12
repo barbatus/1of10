@@ -59,7 +59,21 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+      keyframes: {
+        enter: {
+          '0%': { backgroundColor: 'rgba(255, 255, 0, 1)' },
+          '100%': { backgroundColor: 'rgba(255, 255, 0, 0)' },
+        },
+        exit: {
+          '0%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        },
+      },
+      animation: {
+        enter: 'enter 0.5s forwards',
+        exit: 'exit 0.5s forwards',
+      },
   	}
   },
   plugins: [require("tailwindcss-animate")],

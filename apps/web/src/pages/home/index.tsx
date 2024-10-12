@@ -145,6 +145,7 @@ export const Home = () => {
           defaultSorting={[{ id: "id", desc: true }]}
           className="mb-4 max-md:hidden"
           emptyText="Here you will see your uploaded thumbnails"
+          getRowId={(row) => row.id}
         />
       </div>
       {open && <ThumbnailModal onClose={() => setOpen(false)} />}

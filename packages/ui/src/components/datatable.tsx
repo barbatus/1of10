@@ -9,6 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ReactNode, useCallback, useMemo, useState } from "react";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import { cn } from "../lib/utils";
 import {
@@ -53,6 +54,7 @@ export const DataTable = <TData extends RowData, TValue>({
   defaultSorting,
   className,
   emptyText,
+  getRowId,
 }: {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
@@ -60,6 +62,7 @@ export const DataTable = <TData extends RowData, TValue>({
   className?: string;
   defaultSorting?: SortingState;
   emptyText?: string;
+  getRowId: (row: TData) => string;
 }) => {
   const dataRows = useMemo(() => {
     if (loading) {
@@ -95,6 +98,7 @@ export const DataTable = <TData extends RowData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
+    getRowId,
     state: {
       sorting,
       columnVisibility: {
@@ -102,6 +106,31 @@ export const DataTable = <TData extends RowData, TValue>({
       },
     },
   });
+
+  const rows = table.getRowModel().rows;
+
+  const rowElems = rows.map((row) => (
+    <CSSTransition
+      key={row.id}
+      timeout={500}
+      classNames={{
+        enter: "animate-enter",
+        exit: "animate-exit",
+      }}
+    >
+      <TableRow
+        key={row.id}
+        data-state={row.getIsSelected() && "selected"}
+        className={cn({ "border-none": loading })}
+      >
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id} className="p-4">
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    </CSSTransition>
+  ));
 
   return (
     <div className={cn("rounded-md border", className)}>
@@ -122,29 +151,24 @@ export const DataTable = <TData extends RowData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                className={cn({ "border-none": loading })}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="p-4">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+        {rows.filter((row) => row.original === LOADING_ROW).length > 0 ? (
+          <TableBody>{rowElems}</TableBody>
+        ) : (
+          <TransitionGroup component={TableBody}>
+            {rowElems.length ? (
+              rowElems
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center h-24"
+                >
+                  <EmptyBlock emptyText={emptyText} />
+                </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center h-24">
-                <EmptyBlock emptyText={emptyText} />
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+            )}
+          </TransitionGroup>
+        )}
       </Table>
     </div>
   );
