@@ -16,6 +16,7 @@ import {
   Textarea,
 } from "@app/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Trash2Icon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -89,15 +90,23 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
                     <FormControl>
                       <div
                         className={cn(
-                          "flex items-center justify-center w-full h-60 border",
+                          "flex items-center justify-center w-full h-60 border relative",
                           error && "border-red-500",
                         )}
                       >
                         {thumbnail ? (
-                          <img
-                            src={`${API_HOST}/${thumbnail.downloadUrl}`}
-                            className="h-full"
-                          />
+                          <div className="relative">
+                            <img
+                              src={`${API_HOST}/${thumbnail.downloadUrl}`}
+                              className="h-full"
+                            />
+                            <div
+                              onClick={() => setThumbnail(undefined)}
+                              className="flex justify-center items-center absolute right-2 top-2 cursor-pointer bg-white ghost p-2 rounded-full border"
+                            >
+                              <Trash2Icon className="w-4 h-4 text-black" />
+                            </div>
+                          </div>
                         ) : (
                           <LoadingButton
                             loading={isUploading}
@@ -113,6 +122,7 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
                               id="thumb"
                               type="file"
                               className="absolute opacity-0"
+                              accept="image/*"
                               onChange={(e) =>
                                 onChange(e).then((res) => {
                                   setThumbnail(res);
