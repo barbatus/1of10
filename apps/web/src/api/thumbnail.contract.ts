@@ -12,7 +12,7 @@ export const ThumbnailScoreSchema = z.object({
   id: z.number(),
   thumbnailId: z.number(),
   score: z.number().nullable(),
-  userPrompt: z.string().min(1),
+  userPrompt: z.string().min(1).max(500),
   resultHint: z.string().nullable(),
 });
 
@@ -49,6 +49,12 @@ export const thumbnailContract = c.router(
         200: z.object({
           id: z.number(),
           downloadUrl: z.string(),
+        }),
+        400: z.object({
+          detail: z.string(),
+        }),
+        500: z.object({
+          string: z.string(),
         }),
       },
     },

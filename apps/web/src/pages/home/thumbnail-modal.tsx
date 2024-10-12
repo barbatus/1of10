@@ -31,7 +31,7 @@ import {
 } from "@/api/thumbnail.contract";
 
 export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
-  const { upload, isLoading: isUploading } = useUploadThumbnail();
+  const { upload, isLoading: isUploading } = useUploadThumbnail(true);
   const { getScore, isLoading: isSaving } = useScoreThumbnail();
   const { addScore } = useThumbnailScores();
 
@@ -47,9 +47,6 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
       return upload({
         file,
         name: e.target.value,
-      }).catch((error) => {
-        console.error(error);
-        return undefined;
       });
     },
     [upload],
@@ -136,17 +133,13 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
                 render={({ field, fieldState: { error } }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <div>
-                        <Textarea
-                          placeholder="Enter your prompt"
-                          className={cn(
-                            "w-full h-32",
-                            error && "border-red-500",
-                          )}
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </div>
+                      <Textarea
+                        placeholder="Enter your prompt"
+                        className={cn("w-full h-32", error && "border-red-500")}
+                        value={field.value}
+                        maxLength={500}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                   </FormItem>
                 )}

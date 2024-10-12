@@ -1,3 +1,4 @@
+import { Toaster } from "@app/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router-dom";
 
@@ -16,6 +17,7 @@ export const App = () => {
   return (
     <QueryClientProvider client={client}>
       <RouterProvider router={router} />
+      <Toaster />
     </QueryClientProvider>
   );
 };

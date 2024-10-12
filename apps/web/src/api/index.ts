@@ -1,3 +1,4 @@
+import { useToast } from "@app/ui";
 import { useIsMutating, useQueryClient } from "@tanstack/react-query";
 import { initQueryClient } from "@ts-rest/react-query";
 
@@ -15,7 +16,7 @@ export const useThumbnailScores = () => {
     {},
     {
       queryKey: ["scores"],
-      select: (data) => data.body.results,
+      select: (data) => data.body.results.sort((a, b) => b.id - a.id),
     },
   );
 
@@ -44,19 +45,29 @@ export const useThumbnailScores = () => {
   };
 };
 
-export const useScoreThumbnail = () => {
-  const isLoading = Boolean(useIsMutating({ mutationKey: ["thumbnailScore"] }));
-
+export const useScoreThumbnail = (withToast?: boolean) => {
   const mutate = thumbnailApi.score.useMutation({
     mutationKey: ["thumbnailScore"],
   });
+  const isLoading = Boolean(useIsMutating({ mutationKey: ["thumbnailScore"] }));
+
+  const { toast } = useToast();
 
   const getScore = (body: Parameters<typeof mutate.mutateAsync>[0]["body"]) => {
     return mutate
       .mutateAsync({
         body,
       })
-      .then((res) => res.body);
+      .then((res) => res.body)
+      .catch((res: { body: { detail: string } }) => {
+        if (withToast) {
+          toast({
+            variant: "destructive",
+            title: res.body.detail,
+          });
+        }
+        throw new Error(res.body.detail);
+      });
   };
 
   return {
@@ -65,20 +76,30 @@ export const useScoreThumbnail = () => {
   };
 };
 
-export const useUploadThumbnail = () => {
+export const useUploadThumbnail = (withToast?: boolean) => {
   const mutate = thumbnailApi.upload.useMutation({
     mutationKey: ["thumbnailUpload"],
   });
   const isLoading = Boolean(
     useIsMutating({ mutationKey: ["thumbnailUpload"] }),
   );
+  const { toast } = useToast();
 
   const upload = (body: Parameters<typeof mutate.mutateAsync>[0]["body"]) => {
     return mutate
       .mutateAsync({
         body,
       })
-      .then((res) => res.body);
+      .then((res) => res.body)
+      .catch((res: { body: { detail: string } }) => {
+        if (withToast) {
+          toast({
+            variant: "destructive",
+            title: res.body.detail,
+          });
+        }
+        throw new Error(res.body.detail);
+      });
   };
 
   return {
