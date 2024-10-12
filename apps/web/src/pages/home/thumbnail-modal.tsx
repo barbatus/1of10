@@ -90,12 +90,12 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
                     <FormControl>
                       <div
                         className={cn(
-                          "flex items-center justify-center w-full h-60 border relative",
-                          error && "border-red-500",
+                          "flex items-center justify-center w-full h-60 relative",
+                          error && "border border-red-500",
                         )}
                       >
                         {thumbnail ? (
-                          <div className="relative">
+                          <div className="h-inherit relative">
                             <img
                               src={`${API_HOST}/${thumbnail.downloadUrl}`}
                               className="h-full"

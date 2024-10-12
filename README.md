@@ -13,5 +13,10 @@ brew install poetry
 To run it, execute dev.sh in the root folder:
 
 ```bash
-./dev.sh
+cd backend
+./setup.sh
+cd ..
+pnpm dev
 ```
+
+Running app should be available at http://localhost:5173/

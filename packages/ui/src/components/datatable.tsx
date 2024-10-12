@@ -40,7 +40,7 @@ const EmptyBlock = ({
         className,
       )}
     >
-      <P muted className="mb-0">
+      <P muted className="mb-0 text-lg">
         {emptyText ?? "No results"}
       </P>
     </div>
@@ -155,7 +155,7 @@ export const DataTable = <TData extends RowData, TValue>({
           <TableBody>{rowElems}</TableBody>
         ) : (
           <TransitionGroup component={TableBody}>
-            {rowElems.length ? (
+            {rowElems.length > 0 ? (
               rowElems
             ) : (
               <TableRow>
