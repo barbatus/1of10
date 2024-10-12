@@ -39,7 +39,7 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
         if isinstance(obj_in, dict):
             obj_in_data = obj_in
         else:
-            obj_in_data = obj_in.model_dump(mode='json')
+            obj_in_data = obj_in.dict()
 
         db_obj = self.model(**obj_in_data)
         db_obj.created_at = datetime.now(timezone.utc)
@@ -68,7 +68,7 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
-            update_data = obj_in.model_dump(mode='json', exclude_unset=True)
+            update_data = obj_in.dict(exclude_unset=True)
 
         for field_name in sqlalchemy_inspect(db_obj).dict:
             if field_name in exclude or field_name.startswith(('__')):
@@ -129,4 +129,3 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
     @classmethod
     def get_update_schema_type(cls) -> type[BaseModel]:
         return cls._get_generic_type(3)
-
