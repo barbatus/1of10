@@ -115,3 +115,8 @@ class CRUDRouter(APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, Up
             methods=["GET"],
             summary=f"List all {api_name}s"
         )
+
+class ApiException(HTTPException):
+    def __init__(self, detail: Any, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR) -> None:
+        super().__init__(status_code)
+        self.detail = detail
