@@ -1,5 +1,5 @@
 
-from pydantic import BaseModel, ConfigDict, AliasGenerator
+from pydantic import BaseModel, ConfigDict, AliasGenerator, validator
 from pydantic.alias_generators import to_snake, to_camel
 from typing import Optional
 
@@ -13,6 +13,13 @@ class ThumbnailBase(BaseModel):
         alias_generator=to_camel,
         populate_by_name=True
     )
+
+    @validator("file_data")
+    def check_file_size(cls, v):
+        max_size = 2 * 1024 * 1024
+        if len(v) > max_size:
+            raise ValueError(f"File size should not exceed 2Mb bytes.")
+        return v
 
 class Thumbnail(ThumbnailBase):
     id: int

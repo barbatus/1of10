@@ -1,9 +1,9 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from typing import Optional
 
 class ThumbnailScoreBase(BaseModel):
-    user_prompt: str
+    user_prompt: str = Field(..., max_length=500)
     thumbnail_id: int
 
     model_config = ConfigDict(
