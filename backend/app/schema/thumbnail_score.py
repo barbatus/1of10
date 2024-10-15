@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from typing import Optional
@@ -16,6 +18,7 @@ class ThumbnailScore(ThumbnailScoreBase):
     id: int
     score: Optional[float] = None
     result_hint: Optional[str] = None
+    created_date: datetime
 
 
 class ThumbnailScoreCreate(ThumbnailScoreBase):

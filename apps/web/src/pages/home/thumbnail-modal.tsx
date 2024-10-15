@@ -88,7 +88,7 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
                     <FormControl>
                       <div
                         className={cn(
-                          "flex items-center justify-center w-full h-60 relative",
+                          "flex items-center justify-center w-full h-60 relative rounded-md",
                           error && "border border-red-500",
                         )}
                       >

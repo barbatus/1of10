@@ -14,7 +14,7 @@ class ThumbnailBase(BaseModel):
 
     @validator("file_data")
     def check_file_size(cls, v):
-        max_size = 2 * 1024 * 1024
+        max_size = 5 * 1024 * 1024
         if len(v) > max_size:
             raise ValueError(f"File size should not exceed 2Mb bytes.")
         return v

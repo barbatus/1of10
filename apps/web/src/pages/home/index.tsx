@@ -1,6 +1,7 @@
 import { Button, cn, DataTable, H4, H6, P } from "@app/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
+import { format } from "date-fns";
 
 import { getThumbnailDownloadUrl, useThumbnailScores } from "@/api";
 import { ThumbnailScore } from "@/api/thumbnail.contract";
@@ -111,6 +112,14 @@ const columns = [
     accessorKey: "resultHint",
     cell: ({ getValue }) => (
       <div className="max-h-56 line-clamp-4 w-60">{getValue<string>()}</div>
+    ),
+  },
+  {
+    id: "createdAt",
+    header: "Created at",
+    accessorKey: "createdDate",
+    cell: ({ getValue }) => (
+      <div className="w-20">{format(getValue<Date>(), "MM/dd/yyyy")}</div>
     ),
   },
 ] as ColumnDef<ThumbnailScore>[];

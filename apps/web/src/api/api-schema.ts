@@ -30,6 +30,7 @@ const ThumbnailScore = z
     id: z.number().int(),
     score: z.union([z.number(), z.null()]).optional(),
     resultHint: z.union([z.string(), z.null()]).optional(),
+    createdDate: z.string().datetime({ offset: true }),
   })
   .passthrough();
 const ThumbnailCreate = z

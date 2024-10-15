@@ -31,6 +31,7 @@
     "@ts-rest/core": "^3.51.0",
     "@ts-rest/react-query": "^3.51.0",
     "@zodios/core": "^10.9.6",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.451.0",
     "openapi-zod-client": "^1.18.2",
     "react": "^18.3.1",
