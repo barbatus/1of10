@@ -20,3 +20,5 @@ pnpm dev
 ```
 
 Running app should be available at http://localhost:5173/
+
+Check a recorded demo `demo2.mp4`.
