@@ -1,7 +1,17 @@
-import { Button, cn, DataTable, H4, H6, P } from "@app/ui";
+import {
+  Button,
+  cn,
+  DataTable,
+  H4,
+  H6,
+  P,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@app/ui";
 import { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
 import { format } from "date-fns";
+import { useState } from "react";
 
 import { getThumbnailDownloadUrl, useThumbnailScores } from "@/api";
 import { ThumbnailScore } from "@/api/thumbnail.contract";
@@ -111,7 +121,24 @@ const columns = [
     header: "Suggested Improvement",
     accessorKey: "resultHint",
     cell: ({ getValue }) => (
-      <div className="max-h-56 line-clamp-4 w-60">{getValue<string>()}</div>
+      <Popover>
+        <PopoverTrigger
+          asChild
+          onMouseEnter={(e) => {
+            e.currentTarget.click();
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.click();
+          }}
+        >
+          <div className="max-h-56 line-clamp-4 w-60 cursor-pointer">
+            {getValue<string>()}
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="p-4 rounded-md" sideOffset={5}>
+          {getValue<string>()}
+        </PopoverContent>
+      </Popover>
     ),
   },
   {
