@@ -153,21 +153,14 @@ export const DataTable = <TData extends RowData, TValue>({
         </TableHeader>
         {rows.filter((row) => row.original === LOADING_ROW).length > 0 ? (
           <TableBody>{rowElems}</TableBody>
+        ) : rowElems.length > 0 ? (
+          <TransitionGroup component={TableBody}>{rowElems}</TransitionGroup>
         ) : (
-          <TransitionGroup component={TableBody}>
-            {rowElems.length > 0 ? (
-              rowElems
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="text-center h-24"
-                >
-                  <EmptyBlock emptyText={emptyText} />
-                </TableCell>
-              </TableRow>
-            )}
-          </TransitionGroup>
+          <TableRow>
+            <TableCell colSpan={columns.length} className="text-center h-24">
+              <EmptyBlock emptyText={emptyText} />
+            </TableCell>
+          </TableRow>
         )}
       </Table>
     </div>
