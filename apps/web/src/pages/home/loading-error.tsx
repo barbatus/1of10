@@ -1,13 +1,22 @@
 import { cn, P } from "@app/ui";
 import { AlertTriangleIcon } from "lucide-react";
 
+const isApiError = (error: object): error is { status: number; body: { code?: number; detail: string } } => 
+  Boolean("body" in error && "status" in error && typeof error.body === "object" && error.body && "detail" in error.body);
+
 export const LoadingError = ({
   className,
   error,
 }: {
   className?: string;
-  error: { status?: number; body?: unknown };
+  error: Error | { status?: number; body: unknown };
 }) => {
+  const message =
+    error instanceof Error
+      ? error.message
+      : isApiError(error) ? error.body.detail : undefined;
+  const status = isApiError(error) ? error.status : undefined;
+
   return (
     <div
       className={cn(
@@ -20,9 +29,9 @@ export const LoadingError = ({
         className={cn("h-8 w-8 mb-2 text-destructive-foreground text-yellow-9")}
       />
       <P muted centered>
-        {error.status ? <div>Error code: {error.status}.</div> : ""}
-        {"detail" in error ? (
-          <div>We&apos;ve encountered an error: {error.detail as string}</div>
+        {status ? <div>Error code: {status}.</div> : ""}
+        {message ? (
+          <div>We&apos;ve encountered an error: {message}</div>
         ) : (
           <div>We&apos;ve encountered an error</div>
         )}

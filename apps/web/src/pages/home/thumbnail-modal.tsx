@@ -55,12 +55,10 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
 
   const onSubmit = useCallback(
     (values: ThumbnailScoreInput) => {
-      getScore(values)
-        .then((res) => {
-          addScore(res);
-          onClose();
-        })
-        .catch(console.error);
+      void getScore(values).then((res) => {
+        addScore(res);
+        onClose();
+      });
     },
     [getScore, addScore, onClose],
   );
@@ -95,7 +93,7 @@ export const ThumbnailModal = ({ onClose }: { onClose: () => void }) => {
                         )}
                       >
                         {thumbnail ? (
-                          <div className="h-inherit relative">
+                          <div className="h-60 relative">
                             <img
                               src={`${API_HOST}/${thumbnail.downloadUrl}`}
                               className="h-full"

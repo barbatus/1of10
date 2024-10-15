@@ -16,6 +16,11 @@ export const ThumbnailScoreInputSchema = schemas.ThumbnailScoreCreate;
 
 export type ThumbnailScoreInput = z.infer<typeof schemas.ThumbnailScoreCreate>;
 
+export const ApiErrorSchema = z.object({
+  code: z.number().optional(),
+  detail: z.string(),
+});
+
 export const thumbnailContract = c.router(
   {
     scores: {
@@ -26,9 +31,7 @@ export const thumbnailContract = c.router(
         200: z.object({
           results: z.array(schemas.ThumbnailScore),
         }),
-        500: z.object({
-          detail: z.string(),
-        }),
+        500: ApiErrorSchema,
       },
     },
     upload: {
@@ -44,12 +47,8 @@ export const thumbnailContract = c.router(
           id: z.number(),
           downloadUrl: z.string(),
         }),
-        400: z.object({
-          detail: z.string(),
-        }),
-        500: z.object({
-          detail: z.string(),
-        }),
+        400: ApiErrorSchema,
+        500: ApiErrorSchema,
       },
     },
     score: {
