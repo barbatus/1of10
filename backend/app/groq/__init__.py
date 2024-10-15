@@ -21,8 +21,11 @@ assistant_prompt = f"You are an assistant that evaluates how well a thumbnail ma
                     Include a brief explanation of how to improve the thumbnail to make the score higher. \
                     You should show the score like Score: [score] and the explanation like Reason: [explanation]."
 
-def eval_thumbnail_score(user_prompt: str, content: bytes, model: str = "llama-3.2-11b-vision-preview"):
-    base64_image = base64.b64encode(content).decode('utf-8')
+
+def eval_thumbnail_score(
+    user_prompt: str, content: bytes, model: str = "llama-3.2-11b-vision-preview"
+):
+    base64_image = base64.b64encode(content).decode("utf-8")
     completion = client.chat.completions.create(
         model=model,
         messages=[
@@ -31,7 +34,9 @@ def eval_thumbnail_score(user_prompt: str, content: bytes, model: str = "llama-3
                 "content": [
                     {
                         "type": "text",
-                        "text": assistant_prompt + "\nUser video description:" + user_prompt,
+                        "text": assistant_prompt
+                        + "\nUser video description:"
+                        + user_prompt,
                     },
                     {
                         "type": "image_url",
@@ -39,7 +44,7 @@ def eval_thumbnail_score(user_prompt: str, content: bytes, model: str = "llama-3
                             "url": f"data:image/jpeg;base64,{base64_image}",
                         },
                     },
-                ]
+                ],
             },
         ],
         temperature=0,
@@ -49,8 +54,12 @@ def eval_thumbnail_score(user_prompt: str, content: bytes, model: str = "llama-3
         stop=None,
     )
 
-    if not completion.choices: return None, None
+    if not completion.choices:
+        return None, None
 
     content = completion.choices[0].message.content
-    matches = [re.search(r'Score:\s*(\d+)', content), re.search(r'Reason:\s*(.*)\.', content, re.DOTALL)]
+    matches = [
+        re.search(r"Score:\s*(\d+)", content),
+        re.search(r"Reason:\s*(.*)\.", content, re.DOTALL),
+    ]
     return tuple([match.group(1) if match else None for match in matches])

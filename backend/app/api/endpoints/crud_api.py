@@ -17,10 +17,10 @@ ModelSchema = TypeVar("ModelSchema", bound=BaseModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
+
 def crud_model_dependency(crud_model: CRUDBase):
     def dependency(
-            obj_id: int,
-            db: Session = Depends(get_db)
+        obj_id: int, db: Session = Depends(get_db)
     ):  # type: ignore[valid-type]
         if obj := crud_model.get(db=db, id=obj_id):
             return obj
@@ -29,17 +29,20 @@ def crud_model_dependency(crud_model: CRUDBase):
 
     return dependency
 
-class CRUDRouter(APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaType]):
+
+class CRUDRouter(
+    APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaType]
+):
 
     @wraps(APIRouter.__init__)
     def __init__(
-            self,
-            api_name: str,
-            crud_model: CRUDBase,
-            list_limit = 20,
-            exception_handler: Optional[Callable] = None,
-            *args,
-            **kwargs
+        self,
+        api_name: str,
+        crud_model: CRUDBase,
+        list_limit=20,
+        exception_handler: Optional[Callable] = None,
+        *args,
+        **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
         schema_type = crud_model.get_schema_type()
@@ -50,34 +53,35 @@ class CRUDRouter(APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, Up
         prefix_plural = f"/{api_name}s"
 
         def list_objects(
-                db: Session = Depends(get_db),
-                limit: int | None = Query(None)
+            db: Session = Depends(get_db), limit: int | None = Query(None)
         ):
             objects = crud_model.scan(db=db, limit=limit or list_limit)
-            return {"results": [schema_type.model_validate(obj, from_attributes=True) for obj in objects]}
+            return {
+                "results": [
+                    schema_type.model_validate(obj, from_attributes=True)
+                    for obj in objects
+                ]
+            }
 
-        def get_object(obj = Depends(crud_model_dependency(crud_model))):
+        def get_object(obj=Depends(crud_model_dependency(crud_model))):
             return schema_type.model_validate(obj, from_attributes=True)
 
         def create_object(
-                new_obj: Annotated[create_schema_type, Body()],
-                db: Session = Depends(get_db)
+            new_obj: Annotated[create_schema_type, Body()],
+            db: Session = Depends(get_db),
         ):
             new_obj = crud_model.create(db=db, obj_in=new_obj)
             return schema_type.model_validate(new_obj, from_attributes=True)
 
         def update_object(
-                obj_input: Annotated[update_schema_type, Body()],
-                obj = Depends(crud_model_dependency(crud_model)),
-                db: Session = Depends(get_db)
+            obj_input: Annotated[update_schema_type, Body()],
+            obj=Depends(crud_model_dependency(crud_model)),
+            db: Session = Depends(get_db),
         ):
             updated_obj = crud_model.update(db=db, db_obj=obj, obj_in=obj_input)
             return schema_type.model_validate(updated_obj, from_attributes=True)
 
-        def delete_object(
-                obj_id: int,
-                db: Session = Depends(get_db)
-        ) -> None:
+        def delete_object(obj_id: int, db: Session = Depends(get_db)) -> None:
             crud_model.delete(db=db, obj_id=obj_id)
 
         self.add_api_route(
@@ -85,7 +89,7 @@ class CRUDRouter(APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, Up
             exception_handler()(create_object) if exception_handler else create_object,
             methods=["POST"],
             summary=f"Create {api_name}",
-            status_code=status.HTTP_201_CREATED
+            status_code=status.HTTP_201_CREATED,
         )
 
         self.add_api_route(
@@ -99,24 +103,27 @@ class CRUDRouter(APIRouter, Generic[ModelType, ModelSchema, CreateSchemaType, Up
             f"{prefix}/{{obj_id:int}}",
             exception_handler()(update_object) if exception_handler else update_object,
             methods=["PUT"],
-            summary=f"Update {api_name}"
+            summary=f"Update {api_name}",
         )
 
         self.add_api_route(
             f"{prefix}/{{obj_id:int}}",
             exception_handler()(delete_object) if exception_handler else delete_object,
             methods=["DELETE"],
-            summary=f"delete {api_name}"
+            summary=f"delete {api_name}",
         )
 
         self.add_api_route(
             f"{prefix_plural}",
             exception_handler()(list_objects) if exception_handler else list_objects,
             methods=["GET"],
-            summary=f"List all {api_name}s"
+            summary=f"List all {api_name}s",
         )
 
+
 class ApiException(HTTPException):
-    def __init__(self, detail: Any, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR) -> None:
+    def __init__(
+        self, detail: Any, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    ) -> None:
         super().__init__(status_code)
         self.detail = detail

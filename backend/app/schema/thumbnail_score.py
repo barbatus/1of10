@@ -2,15 +2,15 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from typing import Optional
 
+
 class ThumbnailScoreBase(BaseModel):
     user_prompt: str = Field(..., max_length=500)
     thumbnail_id: int
 
     model_config = ConfigDict(
-        from_attributes=True,
-        alias_generator=to_camel,
-        populate_by_name=True
+        from_attributes=True, alias_generator=to_camel, populate_by_name=True
     )
+
 
 class ThumbnailScore(ThumbnailScoreBase):
     id: int
@@ -20,6 +20,7 @@ class ThumbnailScore(ThumbnailScoreBase):
 
 class ThumbnailScoreCreate(ThumbnailScoreBase):
     pass
+
 
 class ThumbnailScoreUpdate(BaseModel):
     score: Optional[float] = None

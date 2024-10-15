@@ -12,6 +12,7 @@ ModelSchema = TypeVar("ModelSchema", bound=BaseModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
+
 class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: type[ModelType]):
         self.model = model
@@ -20,22 +21,33 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
         schema_model = self.get_schema_type()
         return schema_model.model_validate(obj)  # type: ignore[return-value]
 
-    def get_many(self, db: Session, ids: list[str | int], *options: Any) -> list[ModelType]:
+    def get_many(
+        self, db: Session, ids: list[str | int], *options: Any
+    ) -> list[ModelType]:
         query = db.query(self.model)
 
-        if getattr(self.model, 'blob', False):
-            query = query.options(defer('blob'))
+        if getattr(self.model, "blob", False):
+            query = query.options(defer("blob"))
 
         return query.filter(self.model.id.in_(ids)).options(*options).all()
 
     def get(self, db: Session, id: str | int, *options: Any) -> ModelType | None:
         return next(iter(self.get_many(db, [id], *options)), None)
 
-    def scan(self, db: Session, *, skip: int = 0, limit: int = 100, query: Query | None = None) -> list[ModelType]:
+    def scan(
+        self,
+        db: Session,
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        query: Query | None = None,
+    ) -> list[ModelType]:
         query = query or db.query(self.model)
         return query.offset(skip).limit(limit).all()
 
-    def create(self, db: Session, *, obj_in: CreateSchemaType | dict, commit: bool = True) -> ModelType:
+    def create(
+        self, db: Session, *, obj_in: CreateSchemaType | dict, commit: bool = True
+    ) -> ModelType:
         if isinstance(obj_in, dict):
             obj_in_data = obj_in
         else:
@@ -55,13 +67,13 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
         return db_obj
 
     def update(
-            self,
-            db: Session,
-            *,
-            db_obj: ModelType,
-            obj_in: UpdateSchemaType | dict[str, Any],
-            exclude: list[str] | None = None,
-            commit: bool = True
+        self,
+        db: Session,
+        *,
+        db_obj: ModelType,
+        obj_in: UpdateSchemaType | dict[str, Any],
+        exclude: list[str] | None = None,
+        commit: bool = True,
     ) -> ModelType:
         exclude = exclude or []
 
@@ -71,7 +83,7 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
             update_data = obj_in.dict(exclude_unset=True)
 
         for field_name in sqlalchemy_inspect(db_obj).dict:
-            if field_name in exclude or field_name.startswith(('__')):
+            if field_name in exclude or field_name.startswith(("__")):
                 continue
 
             if field_name in update_data:
@@ -92,14 +104,14 @@ class CRUDBase(Generic[ModelType, ModelSchema, CreateSchemaType, UpdateSchemaTyp
         return self.delete_many(db, [obj_id], commit=commit)
 
     def create_or_update(
-            self,
-            db: Session,
-            obj_in: UpdateSchemaType | CreateSchemaType,
-            commit: bool = True
+        self,
+        db: Session,
+        obj_in: UpdateSchemaType | CreateSchemaType,
+        commit: bool = True,
     ) -> ModelType:
         if hasattr(obj_in, "id"):
             if (existing_obj := self.get(db, obj_in.id)) is None:
-                raise Exception(f'cannot update: object not found (id={obj_in.id})')
+                raise Exception(f"cannot update: object not found (id={obj_in.id})")
 
             res = self.update(db, db_obj=existing_obj, obj_in=obj_in, commit=commit)  # type: ignore[arg-type]
         else:

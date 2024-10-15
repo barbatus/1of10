@@ -6,8 +6,10 @@ from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 class_registry: dict = {}
 
+
 def datetime_utcnow():
     return datetime.now(timezone.utc)
+
 
 @as_declarative(class_registry=class_registry)
 class ORMBase:

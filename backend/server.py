@@ -19,6 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.exception_handler(ApiException)
 def exception_handler(_: Request, e: ApiException):
     return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
@@ -29,8 +30,9 @@ async def log_all_exceptions_middleware(_: Request, e: Exception):
     return JSONResponse(
         status_code=500,
         content={"detail": str(e)},
-        headers={"Access-Control-Allow-Origin": "*"}
+        headers={"Access-Control-Allow-Origin": "*"},
     )
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, log_config=None)

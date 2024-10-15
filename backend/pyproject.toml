@@ -9,7 +9,6 @@ readme = "README.md"
 python = "^3.12"
 fastapi = "^0.115.0"
 sqlalchemy = "^2.0.35"
-mysqlclient = "^2.2.4"
 python-dotenv = "^1.0.1"
 pydantic = "^2.9.2"
 python-multipart = "^0.0.12"
@@ -17,6 +16,8 @@ uvicorn = "^0.31.0"
 alembic = "^1.13.3"
 mysql-connector-python = "^9.0.0"
 groq = "^0.11.0"
+black = "^24.10.0"
+mysqlclient = "^2.2.4"
 
 
 [build-system]

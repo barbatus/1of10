@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from fastapi import  Depends
+from fastapi import Depends
 
 from app.api.endpoints.crud_api import CRUDRouter
 from app.crud import thumbnail_score, thumbnail
@@ -12,12 +12,12 @@ router_name = "thumbnail-score"
 
 router = CRUDRouter(router_name, thumbnail_score)
 
+
 @router.post(f"/{router_name}/score")
 def score(
-    obj_in: ThumbnailScoreCreate, 
-    db: Session = Depends(get_db)
+    obj_in: ThumbnailScoreCreate, db: Session = Depends(get_db)
 ) -> ThumbnailScore:
-    obj = thumbnail_score.create(db, obj_in = obj_in)
+    obj = thumbnail_score.create(db, obj_in=obj_in)
     bytes = thumbnail.get(db, obj.thumbnail_id).file_data
 
     (score, hint) = eval_thumbnail_score(obj.user_prompt, bytes)
