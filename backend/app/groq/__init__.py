@@ -47,7 +47,7 @@ def eval_thumbnail_score(
                 ],
             },
         ],
-        temperature=0,
+        temperature=1,
         max_tokens=1024,
         top_p=1,
         stream=False,

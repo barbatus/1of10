@@ -71,8 +71,8 @@ export default {
         },
       },
       animation: {
-        enter: "list-enter 0.5s forwards",
-        exit: "list-exit 0.5s forwards",
+        enter: "list-enter 1s forwards",
+        exit: "list-exit 1s forwards",
       },
   	}
   },
