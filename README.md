@@ -21,4 +21,4 @@ pnpm dev
 
 Running app should be available at http://localhost:5173/
 
-Check out a recorded demo [`demo2.mp4`](https://github.com/user-attachments/assets/ca45980e-c24d-4e14-8a96-50785c1e0f88).
+Check out a recorded demo [`demo2.mp4`](https://github.com/user-attachments/assets/f12eb662-bc55-4a3f-be84-2917365465a0).
