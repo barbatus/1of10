@@ -2,6 +2,7 @@
 
 Generic CRUD for FastAPI backend plus Web app based on Shadcn components and ts-rest contracts.
 API contracts are generated automatically with the help of openapi-zod-client.
+
 One mono repo setup.
 
 ### Setup
